@@ -3,6 +3,13 @@ const https = require('https')
 const http = require('http')
 const iconv = require('iconv-lite')
 
+const Dish = require('./models/index').Dish
+const Food = require('./models/index').Food
+
+// 用法：
+// let food = {}
+// await Food.create(food)
+
 let savedCookList = []
 
 async function getHttps(fn, url, i) {
