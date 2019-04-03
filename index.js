@@ -195,14 +195,14 @@ async function linksHandle(links) {
         phase.push($(element).children('p').text())
       })
       const peopleList = $('#content #left .phase .people-list').text()
-      return { phase, peopleList }
+      return { phase: phase.join(';'), peopleList }
     },
     function($) {
       let match = []
       const el = $('#content #left .reason ul li').each((idx, element) => {
         match.push($(element).children('p').text())
       })
-      return { match }
+      return { match: match.join(';') }
     }
   ]
   for (let i=1; i<links.length; i++) {
@@ -252,7 +252,7 @@ async function getUrls() {
       cookList.push(pigResult[j][1])
     }
   }
-  console.log(cookList)
+  console.log(pigItems)
 
   const end = new Date().getTime()
   const cost = Math.abs((end - start))/1000
