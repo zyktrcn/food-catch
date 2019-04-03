@@ -12,6 +12,8 @@
     "cheerio": "^1.0.0-rc.2",
     "http": "0.0.0",
     "https": "^1.0.0",
-    "iconv-lite": "^0.4.24"
+    "iconv-lite": "^0.4.24",
+    "mysql2": "^1.6.5",
+    "sequelize": "^5.2.9"
   }
 }

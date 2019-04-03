@@ -3,8 +3,8 @@ const https = require('https')
 const http = require('http')
 const iconv = require('iconv-lite')
 
-const Dish = require('./models/index').Dish
-const Food = require('./models/index').Food
+// const Dish = require('./models/index').Dish
+// const Food = require('./models/index').Food
 
 // 用法：
 // let food = {}
@@ -227,6 +227,10 @@ function getPromiseArr(urls) {
     i++
   }
   return promiseResult
+}
+
+function stringHandle(str) {
+  return str.replace(/\ +/g,"").replace(/[\r\n]/g,"")
 }
 
 async function getUrls() {
