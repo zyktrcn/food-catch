@@ -126,6 +126,7 @@ async function cookItemHandle(url) {
         stepPic += ($el.children('a').children('img').attr('src') + ';')
         stepDes += ($el.children('.stepinfo').text() + ';')
       })
+      stepDes = stringHandle(stepDes)
       // tips
       const tips = $('#content #left .tips p').text()
       // category
