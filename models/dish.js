@@ -8,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
     'time': DataTypes.STRING(25),
     'pic': DataTypes.STRING(250),
     'material': DataTypes.STRING(250),
-    'auxiliary': DataTypes.STRING(250),
     'coke_step': DataTypes.TEXT,
     'coke_pic': DataTypes.TEXT,
     'description': DataTypes.STRING(250),
