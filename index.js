@@ -105,12 +105,12 @@ async function cookItemHandle(url) {
       // pic
       const pic = $('#content #left #banner a img').attr('src')
       // material
-      const table = $('#content #left .material table thbody')
+      const table = $('#content #left .metarial table tbody')
       let material = ''
       table.children('tr').each((i, tr) => {
         $(tr).children('td').each((j, td) => {
           $(td).children('span').each((k, span) => {
-            if (k % 2 !== 0) {
+            if (k % 2 === 0 || k === 0) {
               material += ($(span).text() + ':')
             } else {
               material += ($(span).text() + ';')
@@ -165,7 +165,7 @@ async function linksHandle(links) {
     function($) {
       const el = $('#content #left .description')
       // introduction
-      const des = el.children('.introduction').children('p').text()
+      const des = stringHandle(el.children('.introduction').children('p').text())
       // nutrition
       let nutrition = ''
       const table = el.children('.nutrition').children('table').children('tbody')
@@ -179,13 +179,13 @@ async function linksHandle(links) {
         })
       })
       // effect
-      const effect = el.children('.effect').children('p').text()
+      const effect = stringHandle(el.children('.effect').children('p').text())
       // value
-      const value = el.children('.storage').eq('0').children('p').text()
+      const value = stringHandle(el.children('.storage').eq('0').children('p').text())
       // selection
-      const selection = el.children('.storage').eq('1').children('p').text()
+      const selection = stringHandle(el.children('.storage').eq('1').children('p').text())
       // save
-      const save = el.children('.storage').eq('2').children('p').text()
+      const save = stringHandle(el.children('.storage').eq('2').children('p').text())
       return { des, nutrition, effect, value, selection, save }
     },
     function($) {
@@ -251,6 +251,7 @@ async function getUrls() {
       cookList.push(pigResult[j][1])
     }
   }
+  console.log(cookList)
 
   const end = new Date().getTime()
   const cost = Math.abs((end - start))/1000
