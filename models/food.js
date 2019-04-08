@@ -16,6 +16,6 @@ module.exports = (sequelize, DataTypes) => {
     'saveway': DataTypes.STRING(250),
     'phase': DataTypes.TEXT,
     'match': DataTypes.STRING(500),
-    'dishes': DataTypes.STRING(500),
+    'dishes': DataTypes.TEXT,
   })
 }

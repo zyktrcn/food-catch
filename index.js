@@ -3,12 +3,15 @@ const https = require('https')
 const http = require('http')
 const iconv = require('iconv-lite')
 
-// const Dish = require('./models/index').Dish
-// const Food = require('./models/index').Food
+const Dish = require('./models/index').Dish
+const Food = require('./models/index').Food
 
 // 用法：
 // let food = {}
 // await Food.create(food)
+
+const category = '肉类'
+const team = '猪'
 
 let savedCookList = []
 
@@ -45,10 +48,11 @@ async function pigItemHandle($) {
   $('#content #left .material').each((idx, element) => {
     const pic = $(element).children('.material-img').children('a').children('img').attr('src')
     const name = $(element).children('.des-material').children('h3').text()
-    const nickname = $(element).children('.des-material').children('p').eq('0').text().split('别名：')[1]
-    const category = $(element).children('.des-material').children('p').eq('2').children('a').text()
+    const kw = $(element).children('.des-material').children('p').eq('1').text().split('热量：')[1]
+    const alias = $(element).children('.des-material').children('p').eq('0').text().split('别名：')[1]
+    // const category = $(element).children('.des-material').children('p').eq('2').children('a').text()
     itemObj = {
-      pic, name, nickname, category
+      pic, name, kw, alias, category, team
     }
   })
   let links = []
@@ -92,7 +96,7 @@ async function cookListHandle(urls) {
         cookList.push(cookResult)
         result[j].pic = cookResult.pic
         let { pic, name, major, url } = result[j]
-        resultStr += (`pic=${pic}&&name=${name}&&major=${major}&&url=${url};`)
+        resultStr += (`pic=${pic}@name=${name},`)
       }
     }
   }
@@ -126,8 +130,8 @@ async function cookItemHandle(url) {
       let stepDes = ''
       $('#content #left .step .stepcont').each((idx, element) => {
         const $el = $(element)
-        stepPic += ($el.children('a').children('img').attr('src') + ';')
-        stepDes += ($el.children('.stepinfo').text() + ';')
+        stepPic += ($el.children('a').children('img').attr('src') + ',')
+        stepDes += ($el.children('.stepinfo').text() + '////')
       })
       stepDes = stringHandle(stepDes)
       // tips
@@ -148,13 +152,13 @@ async function cookItemHandle(url) {
         const $el = $(element)
         const pic = $el.children('a').children('img').attr('src')
         const name = $el.children('div').children('a').text()
-        relatedList.push(`pic=${pic}&&name=${name}`)
+        relatedList.push(`pic=${pic}@name=${name}`)
       })
 
       // save cook list name
       savedCookList.push(name)
 
-      return { pic, name, material, stepPic, stepDes, tips, category, relatedList: relatedList.join(';') }
+      return { pic, name, material, coke_pic: stepPic, coke_step: stepDes, tips, category, related: relatedList.join(',') }
     } else {
       return {}
     }
@@ -169,7 +173,7 @@ async function linksHandle(links) {
     function($) {
       const el = $('#content #left .description')
       // introduction
-      const des = stringHandle(el.children('.introduction').children('p').text())
+      const description = stringHandle(el.children('.introduction').children('p').text())
       // nutrition
       let nutrition = ''
       const table = el.children('.nutrition').children('table').children('tbody')
@@ -178,7 +182,7 @@ async function linksHandle(links) {
           if ((j + 1) % 2 === 0) {
             nutrition += ($(td).text() + ':')
           } else {
-            nutrition += ($(td).text() + ';')
+            nutrition += ($(td).text() + ',')
           }
         })
       })
@@ -189,8 +193,8 @@ async function linksHandle(links) {
       // selection
       const selection = stringHandle(el.children('.storage').eq('1').children('p').text())
       // save
-      const save = stringHandle(el.children('.storage').eq('2').children('p').text())
-      return { des, nutrition, effect, value, selection, save }
+      const saveway = stringHandle(el.children('.storage').eq('2').children('p').text())
+      return { description, nutrition, effect, value, selection, saveway }
     },
     function($) {
       let phase = []
@@ -198,14 +202,14 @@ async function linksHandle(links) {
         phase.push($(element).children('p').text())
       })
       const peopleList = $('#content #left .phase .people-list').text()
-      return { phase: phase.join(';'), peopleList }
+      return { phase: phase.join(','), peopleList }
     },
     function($) {
       let match = []
       const el = $('#content #left .reason ul li').each((idx, element) => {
         match.push($(element).children('p').text())
       })
-      return { match: match.join(';') }
+      return { match: match.join(',') }
     }
   ]
   for (let i=1; i<links.length; i++) {
@@ -252,10 +256,18 @@ async function getUrls() {
     pigResult = await Promise.all(promiseResult[i])
     for(let j=0; j<pigResult.length; j++) {
       pigItems[j] = pigResult[j][0]
-      cookList.push(pigResult[j][1])
+      let food = pigResult[j][0]
+      await Food.create(food)
+
+      cookList = cookList.concat(pigResult[j][1])
     }
   }
-  console.log(cookList)
+
+  for (let i=0; i<cookList.length; i++) {
+    let dish = cookList[i]
+    await Dish.create(dish)
+  }
+  // console.log(cookList)
 
   const end = new Date().getTime()
   const cost = Math.abs((end - start))/1000
