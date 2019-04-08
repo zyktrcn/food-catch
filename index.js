@@ -69,6 +69,7 @@ async function pigItemHandle($) {
 async function cookListHandle(urls) {
   let result = []
   let cookList = []
+  let resultStr = ''
   const handle = ($) => {
     let resultArr = []
     $('#content #left .cook-list li').each((idx, element) => {
@@ -90,10 +91,12 @@ async function cookListHandle(urls) {
         if (!cookResult.name) continue
         cookList.push(cookResult)
         result[j].pic = cookResult.pic
+        let { pic, name, major, url } = result[j]
+        resultStr += (`pic=${pic}&&name=${name}&&major=${major}&&url=${url};`)
       }
     }
   }
-  return [result, cookList]
+  return [resultStr, cookList]
 }
 
 async function cookItemHandle(url) {
@@ -145,13 +148,13 @@ async function cookItemHandle(url) {
         const $el = $(element)
         const pic = $el.children('a').children('img').attr('src')
         const name = $el.children('div').children('a').text()
-        relatedList.push({ pic, name })
+        relatedList.push(`pic=${pic}&&name=${name}`)
       })
 
       // save cook list name
       savedCookList.push(name)
 
-      return { pic, name, material, stepPic, stepDes, tips, category, relatedList }
+      return { pic, name, material, stepPic, stepDes, tips, category, relatedList: relatedList.join(';') }
     } else {
       return {}
     }
@@ -252,7 +255,7 @@ async function getUrls() {
       cookList.push(pigResult[j][1])
     }
   }
-  console.log(pigItems)
+  console.log(cookList)
 
   const end = new Date().getTime()
   const cost = Math.abs((end - start))/1000
